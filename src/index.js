@@ -27,30 +27,35 @@ function createCard(card, cardRemove) {
 page.addEventListener('click', (evt) => {
   popupOpen(evt.target)
 })
-// @todo: Функция закрытия попапа
-function popupClose() {
+
+// todo: Функция навешивания слушателей событий
+function listenersAdder() {
   document.querySelector('.page').querySelectorAll('.popup__close').forEach((el) => {
-    el.addEventListener('click', (evt) => {
-      evt.target.parentNode.parentNode.style.display = 'none';
-    })
-    window.addEventListener('click', (evt) => {
-      if(evt.target.classList.contains('popup')) {
-        evt.target.style.display = 'none';
-      }
-    })
-    document.addEventListener('keydown', (evt) => {
-      page.querySelectorAll('.popup').forEach((el) => {
-        if(evt.key == 'Escape') {
-          el.style.display = 'none'
-        }
-      })
-    })
+    el.addEventListener('click', popupClose)
   })
+  document.querySelectorAll('.popup').forEach((el) => {
+    el.addEventListener('click', popupClose)
+  })
+  document.addEventListener('keydown', popupClose)
 }
+
+// @todo: Функция закрытия попапа
+function popupClose(evt) {
+    document.querySelector('.page').querySelectorAll('.popup').forEach((el) => {
+      if(evt.type === 'keydown' && evt.key == 'Escape') {
+        el.style.display = 'none'
+        evt.target.removeEventListener('keydown', popupClose)
+      } else if(evt.type === 'click') {
+        el.style.display = 'none'
+        evt.target.removeEventListener('click', popupClose)
+      } 
+    })
+    
+  }
 // @todo: Функция открытия попапа
 function popupOpen(btn) {
 
-  popupClose()
+  listenersAdder()  
 
   if (btn.classList.contains('profile__edit-button')) {
     document.querySelector('.popup_type_edit').style.display = 'flex';
@@ -63,7 +68,6 @@ function popupOpen(btn) {
     document.querySelector('.popup_type_image').style.display = 'flex';
   }
 }
-
 
 initialCards.forEach(el => {
   cardList.append(createCard(el, cardRemove))
