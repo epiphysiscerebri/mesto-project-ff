@@ -45,7 +45,7 @@ function popupClose(evt) {
       if(evt.type === 'keydown' && evt.key == 'Escape') {
         el.style.display = 'none'
         evt.target.removeEventListener('keydown', popupClose)
-      } else if(evt.type === 'click') {
+      } else if(evt.type === 'click' && evt.target.classList.contains('popup') || evt.target.classList.contains('popup__close')) {
         el.style.display = 'none'
         evt.target.removeEventListener('click', popupClose)
       } 
