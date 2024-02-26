@@ -39,32 +39,54 @@ function listenersAdder() {
   document.addEventListener('keydown', popupClose)
 }
 
+// @todo: Функция сохранения данных в записи
+function savedData(evt) {
+    document.querySelector('.profile__title').textContent = document.querySelector('.popup__input_type_name').value
+    document.querySelector('.profile__description').textContent = document.querySelector('.popup__input_type_description').value
+}
+
 // @todo: Функция закрытия попапа
 function popupClose(evt) {
     document.querySelector('.page').querySelectorAll('.popup').forEach((el) => {
-      if(evt.type === 'keydown' && evt.key == 'Escape') {
-        el.style.display = 'none'
-        evt.target.removeEventListener('keydown', popupClose)
-      } else if(evt.type === 'click' && evt.target.classList.contains('popup') || evt.target.classList.contains('popup__close')) {
-        el.style.display = 'none'
-        evt.target.removeEventListener('click', popupClose)
-      } 
+      if(evt.type === 'keydown' && evt.key == 'Escape' || evt.type === 'submit' || evt.type === 'click' && evt.target.classList.contains('popup') || evt.target.classList.contains('popup__close')) {
+        if(evt.type === 'keydown' && evt.key == 'Escape') {
+          evt.target.removeEventListener('keydown', popupClose)
+        } else if (evt.type === 'submit' || evt.type === 'click' && evt.target.classList.contains('popup') || evt.target.classList.contains('popup__close')) {
+          if (document.querySelector('.popup_type_edit').style.display === 'flex') {
+            savedData(evt)
+          }
+          evt.target.removeEventListener('click', popupClose)
+        }  
+        for(let input of el.getElementsByTagName('input')) {
+          input.value = ''
+        }
+        el.style.display = 'none'      
+      }
     })
-    
   }
 // @todo: Функция открытия попапа
-function popupOpen(btn) {
-
+function popupOpen(popup) {
   listenersAdder()  
 
-  if (btn.classList.contains('profile__edit-button')) {
+  // Добавление обработчика при отправке на формы  
+  for (let form of document.forms) {
+    form.addEventListener('submit', function(evt) {
+      evt.preventDefault()
+      popupClose(evt)
+    })
+  }
+
+  if (popup.classList.contains('profile__edit-button')) {
     document.querySelector('.popup_type_edit').style.display = 'flex';
-  } else if (btn.classList.contains('profile__add-button')) {
+    document.querySelector('.popup__input_type_name').value = document.querySelector('.profile__title').textContent
+    document.querySelector('.popup__input_type_description').value = document.querySelector('.profile__description').textContent
+    
+  } else if (popup.classList.contains('profile__add-button')) {
     document.querySelector('.popup_type_new-card').style.display = 'flex';
-  } else if (btn.classList.contains('card__image')) {
-    document.querySelector('.popup_type_image').querySelector('.popup__content').querySelector('.popup__image').src = btn.src
-    document.querySelector('.popup_type_image').querySelector('.popup__content').querySelector('.popup__image').alt = btn.parentNode.querySelector('.card__image').alt
-    document.querySelector('.popup_type_image').querySelector('.popup__content').querySelector('.popup__caption').textContent = btn.parentNode.querySelector('.card__image').alt
+  } else if (popup.classList.contains('card__image')) {
+    document.querySelector('.popup_type_image').querySelector('.popup__content').querySelector('.popup__image').src = popup.src
+    document.querySelector('.popup_type_image').querySelector('.popup__content').querySelector('.popup__image').alt = popup.parentNode.querySelector('.card__image').alt
+    document.querySelector('.popup_type_image').querySelector('.popup__content').querySelector('.popup__caption').textContent = popup.parentNode.querySelector('.card__image').alt
     document.querySelector('.popup_type_image').style.display = 'flex';
   }
 }
