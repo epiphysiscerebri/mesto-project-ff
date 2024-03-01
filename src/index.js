@@ -11,7 +11,7 @@ const profileDescription = page.querySelector('.profile__description')
 const forms = document.forms
 
 // @todo: Функция удаления карточки
-function cardRemove(card) {
+function removeCard(card) {
   card.remove()
 }
 
@@ -21,9 +21,9 @@ function likeCard(card) {
 }
 
 // @todo: Функция создания карточки
-function createCard(card, cardRemove, likeCard) {
+function createCard(card, removeCard, likeCard) {
   const cardTemplateClone = cardTemplate.querySelector('.places__item').cloneNode(true)
-  cardTemplateClone.querySelector('.card__delete-button').addEventListener('click', () => cardRemove(cardTemplateClone))
+  cardTemplateClone.querySelector('.card__delete-button').addEventListener('click', () => removeCard(cardTemplateClone))
   cardTemplateClone.querySelector('.card__like-button').addEventListener('click', () => likeCard(cardTemplateClone))
 
   cardTemplateClone.querySelector('.card__image').src = card.link
@@ -38,21 +38,21 @@ function createCard(card, cardRemove, likeCard) {
 function closePopup(evt) {
   evt.stopPropagation()
   if(evt.target.classList.contains('popup')) {
-    page.querySelector('.popup_type_edit').style.display = 'none'
-    page.querySelector('.popup_type_new-card').style.display = 'none'
-    page.querySelector('.popup_type_image').style.display = 'none'
+    document.querySelector('.popup_type_edit').classList.remove('popup_is-opened');
+    page.querySelector('.popup_type_new-card').classList.remove('popup_is-opened');
+    page.querySelector('.popup_type_image').classList.remove('popup_is-opened');
   } else if(evt.target.classList.contains('popup__close')) {
-    page.querySelector('.popup_type_edit').style.display = 'none'
-    page.querySelector('.popup_type_new-card').style.display = 'none'
-    page.querySelector('.popup_type_image').style.display = 'none'
+    document.querySelector('.popup_type_edit').classList.remove('popup_is-opened');
+    page.querySelector('.popup_type_new-card').classList.remove('popup_is-opened');
+    page.querySelector('.popup_type_image').classList.remove('popup_is-opened');
   } else if (evt.key === 'Escape') {
-    page.querySelector('.popup_type_edit').style.display = 'none'
-    page.querySelector('.popup_type_new-card').style.display = 'none'
-    page.querySelector('.popup_type_image').style.display = 'none'
+    document.querySelector('.popup_type_edit').classList.remove('popup_is-opened');
+    page.querySelector('.popup_type_new-card').classList.remove('popup_is-opened');
+    page.querySelector('.popup_type_image').classList.remove('popup_is-opened');
   } else if(evt.target.classList.contains('popup__button')) {
-    if (page.querySelector('.popup_type_edit').style.display === 'flex') {
+    if (page.querySelector('.popup_type_edit').classList.contains('popup_is-opened') ) {
       savedData('edit')
-    } else if (page.querySelector('.popup_type_new-card').style.display === 'flex') {
+    } else if (page.querySelector('.popup_type_new-card').classList.contains('popup_is-opened')) {
       savedData('add')
     }
   }
@@ -71,17 +71,17 @@ function openPopup(element) {
   }
 
   if (element.classList.contains('profile__edit-button')) {
-    document.querySelector('.popup_type_edit').style.display = 'flex';
+    document.querySelector('.popup_type_edit').classList.add('popup_is-opened');
     document.querySelector('.popup__input_type_name').value = profileTitle.textContent
     document.querySelector('.popup__input_type_description').value = profileDescription.textContent
     
   } else if (element.classList.contains('profile__add-button')) {
-    document.querySelector('.popup_type_new-card').style.display = 'flex';
+    document.querySelector('.popup_type_new-card').classList.add('popup_is-opened');
   } else if (element.classList.contains('card__image')) {
     document.querySelector('.popup_type_image').querySelector('.popup__content').querySelector('.popup__image').src = element.src
     document.querySelector('.popup_type_image').querySelector('.popup__content').querySelector('.popup__image').alt = element.parentNode.querySelector('.card__image').alt
     document.querySelector('.popup_type_image').querySelector('.popup__content').querySelector('.popup__caption').textContent = element.parentNode.querySelector('.card__image').alt
-    document.querySelector('.popup_type_image').style.display = 'flex';
+    document.querySelector('.popup_type_image').classList.add('popup_is-opened');
   }
 }
 
@@ -90,15 +90,15 @@ function savedData(flag) {
   if(flag == 'edit') {
     profileTitle.textContent = document.querySelector('.popup__input_type_name').value
     profileDescription.textContent = document.querySelector('.popup__input_type_description').value
-    page.querySelector('.popup_type_edit').style.display = 'none'
+    page.querySelector('.popup_type_edit').classList.remove('popup_is-opened');
   } else if(flag == 'add'){
     if (forms.new_place.querySelector('.popup__input_type_card-name').value.length && forms.new_place.querySelector('.popup__input_type_url').value.length) {
       let card = {
         name: forms.new_place.querySelector('.popup__input_type_card-name').value,
         link: forms.new_place.querySelector('.popup__input_type_url').value
       }
-      page.querySelector('.popup_type_new-card').style.display = 'none'
-      cardList.prepend(createCard(card, cardRemove, likeCard))
+      page.querySelector('.popup_type_new-card').classList.remove('popup_is-opened');
+      cardList.prepend(createCard(card, removeCard, likeCard))
     }
   }
 }
@@ -119,6 +119,6 @@ page.addEventListener('click', (evt) => {
 })
 
 initialCards.forEach(el => {
-  cardList.append(createCard(el, cardRemove, likeCard))
+  cardList.append(createCard(el, removeCard, likeCard))
 })
 
