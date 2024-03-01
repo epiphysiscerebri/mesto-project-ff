@@ -6,13 +6,15 @@ const cardList = document.querySelector('.places__list')
 const cardTemplate = document.querySelector('#card-template').content
 // @todo: DOM узлы
 const page = document.querySelector('.page')
-// @todo: Функция создания карточки
+const profileTitle = page.querySelector('.profile__title')
+const profileDescription = page.querySelector('.profile__description')
+const forms = document.forms
 
 // @todo: Функция удаления карточки
 function cardRemove (card) {
   card.remove()
 }
-// @todo: Вывести карточки на страницу
+// @todo: Функция создания карточки
 function createCard(card, cardRemove) {
   const cardTemplateClone = cardTemplate.querySelector('.places__item').cloneNode(true)
   cardTemplateClone.querySelector('.card__delete-button').addEventListener('click', () => cardRemove(cardTemplateClone))
@@ -24,76 +26,92 @@ function createCard(card, cardRemove) {
   return cardTemplateClone
 
 }
-page.addEventListener('click', (evt) => {
-  popupOpen(evt.target)
-})
 
-// todo: Функция навешивания слушателей событий
-function listenersAdder() {
-  document.querySelector('.page').querySelectorAll('.popup__close').forEach((el) => {
-    el.addEventListener('click', popupClose)
-  })
-  document.querySelectorAll('.popup').forEach((el) => {
-    el.addEventListener('click', popupClose)
-  })
-  document.addEventListener('keydown', popupClose)
-}
-
-// @todo: Функция сохранения данных в записи
-function savedData(evt) {
-    document.querySelector('.profile__title').textContent = document.querySelector('.popup__input_type_name').value
-    document.querySelector('.profile__description').textContent = document.querySelector('.popup__input_type_description').value
+// @todo: Функция сохранения записей при создании и при редактировании
+function savedData(evt, flag) {
+  if(flag == 'edit') {
+    profileTitle.textContent = document.querySelector('.popup__input_type_name').value
+    profileDescription.textContent = document.querySelector('.popup__input_type_description').value
+    page.querySelector('.popup_type_edit').style.display = 'none'
+  } else if(flag == 'add'){
+    if (forms.new_place.querySelector('.popup__input_type_card-name').value.length && forms.new_place.querySelector('.popup__input_type_url').value.length) {
+      let card = {
+        name: forms.new_place.querySelector('.popup__input_type_card-name').value,
+        link: forms.new_place.querySelector('.popup__input_type_url').value
+      }
+      page.querySelector('.popup_type_new-card').style.display = 'none'
+      cardList.prepend(createCard(card, cardRemove))
+    }
+  }
 }
 
 // @todo: Функция закрытия попапа
-function popupClose(evt) {
-    document.querySelector('.page').querySelectorAll('.popup').forEach((el) => {
-      if(evt.type === 'keydown' && evt.key == 'Escape' || evt.type === 'submit' || evt.type === 'click' && evt.target.classList.contains('popup') || evt.target.classList.contains('popup__close')) {
-        if(evt.type === 'keydown' && evt.key == 'Escape') {
-          evt.target.removeEventListener('keydown', popupClose)
-        } else if (evt.type === 'submit' || evt.type === 'click' && evt.target.classList.contains('popup') || evt.target.classList.contains('popup__close')) {
-          if (document.querySelector('.popup_type_edit').style.display === 'flex') {
-            savedData(evt)
-          }
-          evt.target.removeEventListener('click', popupClose)
-        }  
-        for(let input of el.getElementsByTagName('input')) {
-          input.value = ''
-        }
-        el.style.display = 'none'      
-      }
-    })
+function closePopup(evt) {
+  evt.stopPropagation()
+  if(evt.target.classList.contains('popup')) {
+    page.querySelector('.popup_type_edit').style.display = 'none'
+    page.querySelector('.popup_type_new-card').style.display = 'none'
+    page.querySelector('.popup_type_image').style.display = 'none'
+  } else if(evt.target.classList.contains('popup__close')) {
+    page.querySelector('.popup_type_edit').style.display = 'none'
+    page.querySelector('.popup_type_new-card').style.display = 'none'
+    page.querySelector('.popup_type_image').style.display = 'none'
+  } else if (evt.key === 'Escape') {
+    page.querySelector('.popup_type_edit').style.display = 'none'
+    page.querySelector('.popup_type_new-card').style.display = 'none'
+    page.querySelector('.popup_type_image').style.display = 'none'
+  } else if(evt.target.classList.contains('popup__button')) {
+    if (page.querySelector('.popup_type_edit').style.display === 'flex') {
+      savedData(evt, 'edit')
+    } else if (page.querySelector('.popup_type_new-card').style.display === 'flex') {
+      savedData(evt, 'add')
+    }
   }
+}
+
 // @todo: Функция открытия попапа
-function popupOpen(popup) {
-  listenersAdder()  
+function openPopup(element) {
+  listenersAdder() 
 
   // Добавление обработчика при отправке на формы  
-  for (let form of document.forms) {
+  for (let form of forms) {
     form.addEventListener('submit', function(evt) {
       evt.preventDefault()
-      popupClose(evt)
+      closePopup(evt)
     })
   }
 
-  if (popup.classList.contains('profile__edit-button')) {
+  if (element.classList.contains('profile__edit-button')) {
     document.querySelector('.popup_type_edit').style.display = 'flex';
-    document.querySelector('.popup__input_type_name').value = document.querySelector('.profile__title').textContent
-    document.querySelector('.popup__input_type_description').value = document.querySelector('.profile__description').textContent
+    document.querySelector('.popup__input_type_name').value = profileTitle.textContent
+    document.querySelector('.popup__input_type_description').value = profileDescription.textContent
     
-  } else if (popup.classList.contains('profile__add-button')) {
+  } else if (element.classList.contains('profile__add-button')) {
     document.querySelector('.popup_type_new-card').style.display = 'flex';
-  } else if (popup.classList.contains('card__image')) {
-    document.querySelector('.popup_type_image').querySelector('.popup__content').querySelector('.popup__image').src = popup.src
-    document.querySelector('.popup_type_image').querySelector('.popup__content').querySelector('.popup__image').alt = popup.parentNode.querySelector('.card__image').alt
-    document.querySelector('.popup_type_image').querySelector('.popup__content').querySelector('.popup__caption').textContent = popup.parentNode.querySelector('.card__image').alt
+  } else if (element.classList.contains('card__image')) {
+    document.querySelector('.popup_type_image').querySelector('.popup__content').querySelector('.popup__image').src = element.src
+    document.querySelector('.popup_type_image').querySelector('.popup__content').querySelector('.popup__image').alt = element.parentNode.querySelector('.card__image').alt
+    document.querySelector('.popup_type_image').querySelector('.popup__content').querySelector('.popup__caption').textContent = element.parentNode.querySelector('.card__image').alt
     document.querySelector('.popup_type_image').style.display = 'flex';
   }
 }
 
+// todo: Функция навешивания слушателей событий
+function listenersAdder() {
+  page.querySelectorAll('.popup__close').forEach((el) => {
+    el.addEventListener('click', closePopup)
+  })
+  page.querySelectorAll('.popup').forEach((el) => {
+    el.addEventListener('click', closePopup)
+  })
+  page.addEventListener('keydown', closePopup)
+}
+
+page.addEventListener('click', (evt) => {
+  openPopup(evt.target)
+})
+
 initialCards.forEach(el => {
   cardList.append(createCard(el, cardRemove))
 })
-
-
 
