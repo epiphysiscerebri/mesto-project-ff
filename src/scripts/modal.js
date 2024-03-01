@@ -14,14 +14,17 @@ function closePopup(evt) {
     document.querySelector('.popup_type_edit').classList.remove('popup_is-opened');
     page.querySelector('.popup_type_new-card').classList.remove('popup_is-opened');
     page.querySelector('.popup_type_image').classList.remove('popup_is-opened');
+    evt.target.removeEventListener('click', closePopup)
   } else if(evt.target.classList.contains('popup__close')) {
     document.querySelector('.popup_type_edit').classList.remove('popup_is-opened');
     page.querySelector('.popup_type_new-card').classList.remove('popup_is-opened');
     page.querySelector('.popup_type_image').classList.remove('popup_is-opened');
+    evt.target.removeEventListener('click', closePopup)
   } else if (evt.key === 'Escape') {
     document.querySelector('.popup_type_edit').classList.remove('popup_is-opened');
     page.querySelector('.popup_type_new-card').classList.remove('popup_is-opened');
     page.querySelector('.popup_type_image').classList.remove('popup_is-opened');
+    page.removeEventListener('keydown', closePopup)
   } else if(evt.target.classList.contains('popup__button')) {
     if (page.querySelector('.popup_type_edit').classList.contains('popup_is-opened') ) {
       savedData('edit')
