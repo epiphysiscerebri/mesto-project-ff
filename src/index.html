@@ -36,9 +36,11 @@
     <div class="popup__content">
       <button type="button" class="popup__close" aria-label="Кнопка закрытия модального окна"></button>
       <h3 class="popup__title">Редактировать профиль</h3>
-      <form class="popup__form" name="edit_profile">
-        <input type="text" name="name" class="popup__input popup__input_type_name" placeholder="Имя" required>
-        <input type="text" name="description" class="popup__input popup__input_type_description" placeholder="Занятие" required>
+      <form class="popup__form" name="edit_profile" novalidate>
+        <input type="text" id="popup-input-name" name="name" class="popup__input popup__input_type_name" placeholder="Имя" minlength="2" maxlength="40" pattern="^[a-zA-Zа-яёА-ЯЁ\-\s]+$" data-error-message="Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы" required>
+        <span class="popup-input-name-error popup__input_error"></span>
+        <input type="text" id="popup-input-description" name="description" class="popup__input popup__input_type_description" placeholder="Занятие" minlength="2" maxlength="200" required>
+        <span class="popup-input-description-error popup__input_error"></span>
         <button type="submit" class="button popup__button" aria-label="Кнопка сохранить">Сохранить</button>
       </form>
     </div>
@@ -49,8 +51,10 @@
       <button type="button" class="popup__close" aria-label="Кнопка закрытия модального окна"></button>
       <h3 class="popup__title">Новое место</h3>
       <form class="popup__form" name="new_place">
-        <input type="text" name="place-name" class="popup__input popup__input_type_card-name" placeholder="Название" required>
-        <input type="url" name="link" class="popup__input popup__input_type_url" placeholder="Ссылка на картинку" required>
+        <input type="text" id="popup-input-place-name" name="place-name" class="popup__input popup__input_type_card-name" placeholder="Название" pattern="^[a-zA-Zа-яёА-ЯЁ\-\s]+$" data-error-message="Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы" required>
+        <span class="popup-input-place-name-error popup__input_error"></span>
+        <input type="url" id="popup-input-link" name="link" class="popup__input popup__input_type_url" placeholder="Ссылка на картинку" required>
+        <span class="popup-input-link-error popup__input_error"></span>
         <button type="submit" class="button popup__button" aria-label="Кнопка сохранить">Сохранить</button>
       </form>
     </div>

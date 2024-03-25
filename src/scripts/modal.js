@@ -12,30 +12,14 @@ function openPopup(popup) {
   popup.addEventListener('click', closePopupByClick)
 }
 
-// @todo: Функция сохранения записей при создании и при редактировании
-// function savedData(flag) {
-//   if(flag == 'edit') {
-//     profileTitle.textContent = document.querySelector('.popup__input_type_name').value
-//     profileDescription.textContent = document.querySelector('.popup__input_type_description').value
-//     page.querySelector('.popup_type_edit').classList.remove('popup_is-opened');
-//   } else if(flag == 'add'){
-//     if (forms.new_place.querySelector('.popup__input_type_card-name').value.length && forms.new_place.querySelector('.popup__input_type_url').value.length) {
-//       let card = {
-//         name: forms.new_place.querySelector('.popup__input_type_card-name').value,
-//         link: forms.new_place.querySelector('.popup__input_type_url').value
-//       }
-//       page.querySelector('.popup_type_new-card').classList.remove('popup_is-opened');
-//       cardList.prepend(createCard(card, removeCard, likeCard))
-//     }
-//   }
-// }
-
+// @todo: Функция закрытия попапа по esc
 const closePopupByEsc = (evt) => {
   if (evt.key === 'Escape') {
     closePopup(document.querySelector('.popup_is-opened'))
   }
 }
 
+// @todo: Функция закрытия попапа по click
 const closePopupByClick = (evt) => {
   if (evt.target.classList.contains('popup') || evt.target.classList.contains('popup__close')) {
     closePopup(evt.currentTarget)

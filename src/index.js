@@ -2,8 +2,19 @@ import {initialCards} from './scripts/cards'
 import './pages/index.css';
 import {removeCard, likeCard, createCard} from './scripts/card'
 import {closePopup, openPopup} from './scripts/modal'
+import {enableValidation, clearValidation} from './scripts/validation'
 
 // @todo: DOM узлы
+// объект настроек для валидации
+const validationSettingsObject = {
+  formSelector: '.popup__form',
+  inputSelector: '.popup__input',
+  submitButtonSelector: '.popup__button',
+  inactiveButtonClass: 'popup__button_disabled',
+  inputErrorClass: 'popup__input_type_error',
+  errorClass: 'popup__error_visible'
+}
+
 const cardList = document.querySelector('.places__list')
 const forms = document.forms
 
@@ -34,7 +45,7 @@ const submitEdit = (evt) => {
 
 const submitAdd = (evt) => {
   evt.preventDefault()
-  let card = {
+  const card = {
     name: forms.new_place.querySelector('.popup__input_type_card-name').value,
     link: forms.new_place.querySelector('.popup__input_type_url').value
   }
@@ -49,11 +60,15 @@ forms.new_place.addEventListener('submit', submitAdd)
   
 profileAddButton.addEventListener('click', () => {
   openPopup(popupTypeNewCard)
+  clearValidation(popupTypeNewCard, validationSettingsObject)
+  enableValidation(validationSettingsObject)
 })
 profileEditButton.addEventListener('click', () => {
   popupTypeEdit.querySelector('.popup__input_type_name').value = profileTitle.textContent
   popupTypeEdit.querySelector('.popup__input_type_description').value = profileDescription.textContent
   openPopup(popupTypeEdit)
+  enableValidation(validationSettingsObject)
+  clearValidation(popupTypeEdit, validationSettingsObject)
 })
 
 
