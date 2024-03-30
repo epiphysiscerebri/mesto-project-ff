@@ -7,7 +7,21 @@
   background-size: cover;
   background-position: center;
   margin: 0 29px 0 0;
-  background-image: url('../../../../src/images/avatar.jpg');
+  position: relative;
+}
+
+.profile__image_edit_icon {
+  display: none;
+  width: 120px;
+  height: 120px;
+  position: absolute;
+  background: transparent url('../../../images/edit-icon.svg') center no-repeat;
+  background-color: black;
+  background-size: 26px 26px;
+}
+
+.profile__image_edit_icon:hover {
+  opacity: 0.8;
 }
 
 @media screen and (max-width: 740px) {
