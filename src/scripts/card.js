@@ -9,14 +9,15 @@ function hasLikeOnTheCard(card) {
 
 // @todo: Функция удаления карточки
 function removeCard(cardElementDOM, cardData) {
-  cardElementDOM.remove()
-  deleteCard(cardData)
+  deleteCard(cardData).then(() => {
+    cardElementDOM.remove()
+  })
 }
 
 // @todo: Функция лайка карточки
 function likeCard(cardElementDOM, cardData) {
-  cardElementDOM.querySelector('.card__like-button').classList.toggle('card__like-button_is-active')
   changeLikesCount(cardData, hasLikeOnTheCard(cardElementDOM)).then((res) => {
+    cardElementDOM.querySelector('.card__like-button').classList.toggle('card__like-button_is-active')
     cardElementDOM.querySelector('.card__counter-likes').textContent = res.likes.length
   })
   
