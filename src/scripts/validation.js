@@ -1,20 +1,18 @@
-let validationSettingsObject = undefined
-
-const showInputError = (formElement, inputElement, errorMessage) => {
+const showInputError = (formElement, inputElement, errorMessage, settingsObject) => {
   const errorElement = formElement.querySelector(`.${inputElement.id}-error`); 
-  inputElement.classList.add(validationSettingsObject.inputErrorClass);
+  inputElement.classList.add(settingsObject.inputErrorClass);
   errorElement.textContent = errorMessage;
-  errorElement.classList.add(validationSettingsObject.errorClass);
+  errorElement.classList.add(settingsObject.errorClass);
 };
 
-const hideInputError = (formElement, inputElement) => {
+const hideInputError = (formElement, inputElement, settingsObject) => {
   const errorElement = formElement.querySelector(`.${inputElement.id}-error`); 
-  inputElement.classList.remove(validationSettingsObject.inputErrorClass);
-  errorElement.classList.remove(validationSettingsObject.errorClass);
+  inputElement.classList.remove(settingsObject.inputErrorClass);
+  errorElement.classList.remove(settingsObject.errorClass);
   errorElement.textContent = '';
 };
 
-const isValid = (formElement, inputElement) => {
+const isValid = (formElement, inputElement, settingsObject) => {
 
   if (inputElement.validity.patternMismatch) {
     inputElement.setCustomValidity(inputElement.dataset.errorMessage);
@@ -23,9 +21,9 @@ const isValid = (formElement, inputElement) => {
   }
 
   if (!inputElement.validity.valid) {
-    showInputError(formElement, inputElement, inputElement.validationMessage);
+    showInputError(formElement, inputElement, inputElement.validationMessage, settingsObject);
   } else {
-    hideInputError(formElement, inputElement);
+    hideInputError(formElement, inputElement, settingsObject);
   }
 };
 
@@ -35,45 +33,46 @@ const hasInvalidInput = (inputList) => {
   })
 }; 
 
-const toggleButtonState = (inputList, buttonElement) => {
+const toggleButtonState = (inputList, buttonElement, settingsObject) => {
   if (hasInvalidInput(inputList)) {
     buttonElement.disabled = true;
-    buttonElement.classList.add(validationSettingsObject.inactiveButtonClass);
+    buttonElement.classList.add(settingsObject.inactiveButtonClass);
   } else {
     buttonElement.disabled = false;
-    buttonElement.classList.remove(validationSettingsObject.inactiveButtonClass);
+    buttonElement.classList.remove(settingsObject.inactiveButtonClass);
   }
 };
 
-const setEventListeners = (formElement) => {
-  const inputList = Array.from(formElement.querySelectorAll(validationSettingsObject.inputSelector));
-  const buttonElement = formElement.querySelector(validationSettingsObject.submitButtonSelector);
-  toggleButtonState(inputList, buttonElement)
+const setEventListeners = (formElement, settingsObject) => {
+  const inputList = Array.from(formElement.querySelectorAll(settingsObject.inputSelector));
+  const buttonElement = formElement.querySelector(settingsObject.submitButtonSelector);
+  toggleButtonState(inputList, buttonElement, settingsObject)
   inputList.forEach((inputElement) => {
     inputElement.addEventListener('input', () => {
-      isValid(formElement, inputElement)
-      toggleButtonState(inputList, buttonElement)
+      isValid(formElement, inputElement, settingsObject)
+      toggleButtonState(inputList, buttonElement, settingsObject)
     });
   });
 };
 
 const enableValidation = (settingsObject) => {
-  validationSettingsObject = settingsObject
-  const formList = Array.from(document.querySelectorAll(validationSettingsObject.formSelector));
+  const formList = Array.from(document.querySelectorAll(settingsObject.formSelector));
   formList.forEach((formElement) => {
-    setEventListeners(formElement);
+    setEventListeners(formElement, settingsObject);
   });
 }
 
-const clearValidation = (formElement, settingsObject) => {
-  validationSettingsObject = settingsObject
-  const inputList = Array.from(formElement.querySelectorAll(validationSettingsObject.inputSelector));
+const clearValidation = (formElement, settingsObject, ) => {
+  const inputList = Array.from(formElement.querySelectorAll(settingsObject.inputSelector));
+  if(inputList.some(input => input.validity.valid)) {
+    formElement.querySelector(settingsObject.submitButtonSelector).classList.remove(settingsObject.inactiveButtonClass)
+  } else {
+    formElement.querySelector(settingsObject.submitButtonSelector).classList.add(settingsObject.inactiveButtonClass)
+  }
   inputList.forEach((formInput) => {
     formElement.querySelector(`.${formInput.id}-error`).textContent = ""
-    formInput.classList.remove(validationSettingsObject.inputErrorClass)
-    formElement.querySelector(validationSettingsObject.submitButtonSelector).classList.remove(validationSettingsObject.inactiveButtonClass)
+    formInput.classList.remove(settingsObject.inputErrorClass)
   })
-
 }
 
 export {enableValidation, clearValidation}

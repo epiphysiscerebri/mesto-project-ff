@@ -1,25 +1,25 @@
-// @todo: Функция закрытия попапа
+// Функция закрытия попапа
 function closePopup(popup) {
   popup.classList.remove('popup_is-opened')
   document.removeEventListener('keydown', closePopupByEsc);
   popup.removeEventListener('click', closePopupByClick)
 }
 
-// @todo: Функция открытия попапа
+// Функция открытия попапа
 function openPopup(popup) {
   popup.classList.add('popup_is-opened')
   document.addEventListener('keydown', closePopupByEsc);
   popup.addEventListener('click', closePopupByClick)
 }
 
-// @todo: Функция закрытия попапа по esc
+// Функция закрытия попапа по esc
 const closePopupByEsc = (evt) => {
   if (evt.key === 'Escape') {
     closePopup(document.querySelector('.popup_is-opened'))
   }
 }
 
-// @todo: Функция закрытия попапа по click
+// Функция закрытия попапа по click
 const closePopupByClick = (evt) => {
   if (evt.target.classList.contains('popup') || evt.target.classList.contains('popup__close')) {
     closePopup(evt.currentTarget)

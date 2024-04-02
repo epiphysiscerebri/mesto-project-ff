@@ -7,10 +7,16 @@ function hasLikeOnTheCard(card) {
   return Array.from(card.querySelector('.card__like-button').classList).some(ruleLikeButtonActive)
 }
 
+function getCardTemplate(template) {
+  return template.querySelector('.places__item').cloneNode(true)
+}
+
 // @todo: Функция удаления карточки
 function removeCard(cardElementDOM, cardData) {
   deleteCard(cardData).then(() => {
     cardElementDOM.remove()
+  }).catch((err) => {
+    console.log(err);
   })
 }
 
@@ -19,22 +25,21 @@ function likeCard(cardElementDOM, cardData) {
   changeLikesCount(cardData, hasLikeOnTheCard(cardElementDOM)).then((res) => {
     cardElementDOM.querySelector('.card__like-button').classList.toggle('card__like-button_is-active')
     cardElementDOM.querySelector('.card__counter-likes').textContent = res.likes.length
+  }).catch((err) => {
+    console.log(err);
   })
   
 }
 
 // @todo: Функция создания карточки
 function createCard(card, removeCard, likeCard, openPopupBigImage, profileId) {
-  const cardTemplateClone = cardTemplate.querySelector('.places__item').cloneNode(true)
-  if (profileId === card.owner._id) {
-    cardTemplateClone.querySelector('.card__delete-button').addEventListener('click', () => removeCard(cardTemplateClone, card))
-    cardTemplateClone.querySelector('.card__like-button').addEventListener('click', () => likeCard(cardTemplateClone, card))
-    cardTemplateClone.querySelector('.card__image').addEventListener('click', () => openPopupBigImage(cardTemplateClone))
-  } else {
-    cardTemplateClone.querySelector('.card__like-button').addEventListener('click', () => likeCard(cardTemplateClone, card))
-    cardTemplateClone.querySelector('.card__image').addEventListener('click', () => openPopupBigImage(cardTemplateClone))
+  const cardTemplateClone = getCardTemplate(cardTemplate)
+  if (profileId !== card.owner._id) {
     cardTemplateClone.querySelector('.card__delete-button').style.display = 'none'
   }
+  cardTemplateClone.querySelector('.card__delete-button').addEventListener('click', () => removeCard(cardTemplateClone, card))
+  cardTemplateClone.querySelector('.card__like-button').addEventListener('click', () => likeCard(cardTemplateClone, card))
+  cardTemplateClone.querySelector('.card__image').addEventListener('click', () => openPopupBigImage(cardTemplateClone))
   
   card.likes.forEach((like) => {
     if (profileId === like._id) {
